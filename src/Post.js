@@ -95,7 +95,7 @@
      */
     function setIsVoteRequest()
     {
-        this.isVoteRequest = Boolean(this.matchTag(/^(cv|delv)-(pls|maybe)$/));
+        this.isVoteRequest = Boolean(this.matchTag(/^(cv|delv|rov|undelv)-(pls|maybe)$/));
         if (this.isVoteRequest) {
             addClass(this.contentElement, 'cvhelper-vote-request');
         }
