@@ -10,7 +10,7 @@
     /**
      * Get class names of a DOM element
      *
-     * @param HTMLElement element The DOM element
+     * @param {HTMLElement} element The DOM element
      *
      * @return Array The class names of the element
      */
@@ -32,8 +32,8 @@
     /**
      * Adds a class name to a DOM element
      *
-     * @param HTMLElement element The DOM element
-     * @param string      string  The class name to add
+     * @param {HTMLElement} element The DOM element
+     * @param {string}      className  The class name to add
      */
     function addClass(element, className)
     {
@@ -47,10 +47,10 @@
     /**
      * Tests whether an element has a class name
      *
-     * @param HTMLElement element The DOM element
-     * @param string      string  The class name to add
+     * @param {HTMLElement} element The DOM element
+     * @param {string}      className  The class name to add
      *
-     * @return bool True if the element has the class name
+     * @return Boolean True if the element has the class name
      */
     function hasClass(element, className)
     {
@@ -106,9 +106,9 @@
      */
     function setVoteType()
     {
-        var i, l, voteTag;
+        var voteTag;
 
-        voteTag = this.matchTag(/^(cv|delv)-(pls|maybe)$/);
+        voteTag = this.matchTag(/^(cv|delv|rov|undelv)-(pls|maybe)$/);
         this.voteType = this.voteTypes[voteTag.split('-').shift().toUpperCase()];
         this.voteTagElement = this.tags[voteTag];
 
@@ -189,7 +189,7 @@
     /**
      * Get references to useful DOM elements that relate to the post
      *
-     * @param HTMLElement messageElement The post message container element
+     * @param {HTMLElement} messageElement The post message container element
      */
     function setPostElements(messageElement)
     {
@@ -212,7 +212,7 @@
     /**
      * Mark the post as having an oustanding notification and add an avatar notification
      *
-     * @param int type The type of notification (cv/delv)
+     * @param {int} type The type of notification (cv/delv)
      */
     function notify(type)
     {
@@ -319,7 +319,7 @@
     /**
      * Determine whether the post should be ignored for oneboxing
      *
-     * @return bool True if the post should not be oneboxed
+     * @return Boolean True if the post should not be oneboxed
      */
     function isOneboxIgnored()
     {
@@ -333,7 +333,7 @@
     /**
      * Determine whether the post should be ignored for notifications
      *
-     * @return bool True if the post should not raise notifications
+     * @return Boolean True if the post should not raise notifications
      */
     function isNotifyIgnored()
     {
@@ -347,7 +347,7 @@
     /**
      * Determine whether the post needs to have a visited tag added
      *
-     * @return bool True if the post should have a visited tag added
+     * @return Boolean True if the post should have a visited tag added
      */
     function needsVisitedLabel()
     {
@@ -371,7 +371,7 @@
     /**
      * Determine whether the post link has been previously visited by the user
      *
-     * @return bool True if the post link has been previously visted by the user
+     * @return Boolean True if the post link has been previously visted by the user
      */
     function isVisited()
     {
@@ -421,9 +421,9 @@
     /**
      * Prepend a label to the post content
      *
-     * @param string text      The label text
-     * @param string foreColor Color for text and border
-     * @param string backColor Color for background
+     * @param {string} text      The label text
+     * @param {string} foreColor Color for text and border
+     * @param {string} backColor Color for background
      */
     function addLabelToContent(text, foreColor, backColor)
     {
@@ -440,7 +440,7 @@
 
         labelEl.appendChild(this.document.createTextNode(text));
 
-        spacer = this.document.createTextNode(' ')
+        spacer = this.document.createTextNode(' ');
 
         this.contentElement.insertBefore(spacer, this.contentElement.firstChild);
         this.contentElement.insertBefore(labelEl, this.contentElement.firstChild);
@@ -449,9 +449,9 @@
     /**
      * Test whether the message has the specified label
      *
-     * @param string label The label to search for
+     * @param {string} label The label to search for
      *
-     * @return bool True if the post has the specified label
+     * @return Boolean True if the post has the specified label
      */
     function hasLabel(label)
     {
@@ -502,14 +502,14 @@
     /**
      * Constructor
      *
-     * @param HTMLDocument                          document                  The DOM document upon which the post resides
-     * @param object                                pluginSettings            XBuilder settings module
-     * @param CvPlsHelper.ChatRoom                  chatRoom                  The chatroom object to which the post belongs
-     * @param CvPlsHelper.OneBoxFactory             oneBoxFactory             Factory for making OneBoxes
-     * @param CvPlsHelper.AvatarNotificationManager avatarNotificationManager Avatar notification manager object
-     * @param CvPlsHelper.AnimatorFactory           animatorFactory           Factory for making animators
-     * @param CvPlsHelper.ClickTracker              clickTracker              Tracks previously visited vote request links
-     * @param HTMLElement                           messageElement            The post message container element
+     * @param {HTMLDocument}                          document                  The DOM document upon which the post resides
+     * @param {object}                                pluginSettings            XBuilder settings module
+     * @param {CvPlsHelper.ChatRoom}                  chatRoom                  The chatroom object to which the post belongs
+     * @param {CvPlsHelper.OneBoxFactory}             oneBoxFactory             Factory for making OneBoxes
+     * @param {CvPlsHelper.AvatarNotificationManager} avatarNotificationManager Avatar notification manager object
+     * @param {CvPlsHelper.AnimatorFactory}           animatorFactory           Factory for making animators
+     * @param {CvPlsHelper.ClickTracker}              clickTracker              Tracks previously visited vote request links
+     * @param {HTMLElement}                           messageElement            The post message container element
      */
     CvPlsHelper.Post = function(
         document, pluginSettings, chatRoom, oneBoxFactory, avatarNotificationManager,
@@ -626,7 +626,7 @@
     CvPlsHelper.Post.prototype.questionId = null;
 
     /**
-     * @var bool Whether the question data has been retrieved from the SE API
+     * @var Boolean Whether the question data has been retrieved from the SE API
      */
     CvPlsHelper.Post.prototype.hasQuestionData = false;
 
@@ -653,22 +653,22 @@
     CvPlsHelper.Post.prototype.postType = 0;
 
     /**
-     * @var bool Whether the post contains a vote request
+     * @var Boolean Whether the post contains a vote request
      */
     CvPlsHelper.Post.prototype.isVoteRequest = false;
 
     /**
-     * @var bool Whether the vote request has been completed
+     * @var Boolean Whether the vote request has been completed
      */
     CvPlsHelper.Post.prototype.isOutstandingRequest = true;
 
     /**
-     * @var bool Whether the post was created by the current user
+     * @var Boolean Whether the post was created by the current user
      */
     CvPlsHelper.Post.prototype.isOwnPost = false;
 
     /**
-     * @var bool Whether the post is still on the DOM
+     * @var Boolean Whether the post is still on the DOM
      */
     CvPlsHelper.Post.prototype.isOnScreen = true;
 
@@ -678,19 +678,19 @@
     CvPlsHelper.Post.prototype.notificationHistory = 0;
 
     /**
-     * @var bool Whether the post has an outstanding notification
+     * @var Boolean Whether the post has an outstanding notification
      */
     CvPlsHelper.Post.prototype.hasPendingNotification = false;
 
     /**
-     * @var bool Whether the post signature can be modified
+     * @var Boolean Whether the post signature can be modified
      */
     CvPlsHelper.Post.prototype.hasModifyableSignature = false;
 
     /**
      * Matches tags against the given expr and returns the first match
      *
-     * @param string|RegExp expr The expression to match
+     * @param {string|RegExp} expr The expression to match
      *
      * @return HTMLElement|null The matching tag element or null if no match found
      */
@@ -717,8 +717,8 @@
      * Replaces the internal element set with different elements
      * Useful for posts that have been edited
      *
-     * @param HTMLElement newNode          The new message container element
-     * @param bool        isSameQuestionId If true keep the old onebox element
+     * @param {HTMLElement} newNode          The new message container element
+     * @param {Boolean}        isSameQuestionId If true keep the old onebox element
      */
     CvPlsHelper.Post.prototype.replaceElement = function(newNode, isSameQuestionId)
     {
@@ -741,7 +741,7 @@
     /**
      * Set the data response object from the SE API
      *
-     * @param object data The data response from the SE API
+     * @param {object} data The data response from the SE API
      */
     CvPlsHelper.Post.prototype.setQuestionData = function(data)
     {
@@ -822,7 +822,7 @@
     /**
      * Handle the mousedown event on links to the target question
      *
-     * @param Event e The event object
+     * @param {Event} e The event object
      */
     CvPlsHelper.Post.prototype.questionLinkMouseDownHandler = function(e)
     {
@@ -867,6 +867,7 @@
                 result.b = parseInt(parts[3], 10);
                 return result;
             }
+            return {};
         }
 
         if (this.isOnScreen) {
