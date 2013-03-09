@@ -4,7 +4,7 @@
 /**
  * Represents a post in the chatroom
  */
-(function() {
+(function () {
     'use strict';
 
     /**
@@ -14,8 +14,7 @@
      *
      * @return Array The class names of the element
      */
-    function getClassNameArray(element)
-    {
+    function getClassNameArray(element) {
         var raw, current, result = [];
         if (element && element.className) {
             raw = element.className.split(/\s+/g);
@@ -35,8 +34,7 @@
      * @param {HTMLElement} element The DOM element
      * @param {string}      className  The class name to add
      */
-    function addClass(element, className)
-    {
+    function addClass(element, className) {
         var classes = getClassNameArray(element);
         if (classes.indexOf(className) < 0) {
             classes.push(className);
@@ -52,16 +50,14 @@
      *
      * @return Boolean True if the element has the class name
      */
-    function hasClass(element, className)
-    {
+    function hasClass(element, className) {
         return getClassNameArray(element).indexOf(className) >= 0;
     }
 
     /**
      * Sets the message ID of the post from the ID of the message element
      */
-    function setPostId()
-    {
+    function setPostId() {
         var messageIdClass = (this.messageElement.getAttribute('id') || '').match(/message-(\d+)/);
         if (messageIdClass) {
             this.postId = parseInt(messageIdClass[1], 10);
@@ -71,8 +67,7 @@
     /**
      * Determines whether the post was added by the active user
      */
-    function setIsOwnPost()
-    {
+    function setIsOwnPost() {
         if (this.postId && this.messageElement.parentNode && this.messageElement.parentNode.parentNode) {
             this.isOwnPost = hasClass(this.messageElement.parentNode.parentNode, this.chatRoom.activeUserClass);
         }
@@ -81,8 +76,7 @@
     /**
      * Parses all tags in the post body into an array
      */
-    function loadTags()
-    {
+    function loadTags() {
         var i, tagElements = this.contentElement.querySelectorAll('a span.ob-post-tag');
         this.tags = {};
         for (i = 0; i < tagElements.length; i++) {
@@ -93,8 +87,7 @@
     /**
      * Determines whether the post contains a close/delete vote request
      */
-    function setIsVoteRequest()
-    {
+    function setIsVoteRequest() {
         this.isVoteRequest = Boolean(this.matchTag(/^(cv|delv|rov|undelv)-(pls|maybe)$/));
         if (this.isVoteRequest) {
             addClass(this.contentElement, 'cvhelper-vote-request');
@@ -104,8 +97,7 @@
     /**
      * Sets the vote type of the post and manipulates vote post structure for easy reference later on
      */
-    function setVoteType()
-    {
+    function setVoteType() {
         var voteTag;
 
         voteTag = this.matchTag(/^(cv|delv|rov|undelv)-(pls|maybe)$/);
@@ -125,8 +117,7 @@
     /**
      * Sets the question ID based on the first question link in the post
      */
-    function setQuestionId()
-    {
+    function setQuestionId() {
         var questionLinks, i, l, parts;
 
         questionLinks = this.contentElement.querySelectorAll('a[href^="http://stackoverflow.com/questions/"], a[href^="http://stackoverflow.com/q/"]');
@@ -153,11 +144,10 @@
     /**
      * Adds a mousedown event handle to the question link element
      */
-    function addQuestionLinkMouseDownHandler()
-    {
+    function addQuestionLinkMouseDownHandler() {
         var self = this;
 
-        this.questionLinkElement.addEventListener('mousedown', function(e) {
+        this.questionLinkElement.addEventListener('mousedown', function (e) {
             self.questionLinkMouseDownHandler(e);
         });
     }
@@ -165,16 +155,14 @@
     /**
      * Adds a class name to the post on the DOM to indicate that it has been processed
      */
-    function markProcessed()
-    {
+    function markProcessed() {
         addClass(this.contentElement, 'cvhelper-processed');
     }
 
     /**
      * Initialization routine to obtain information about the post from the DOM
      */
-    function initPost()
-    {
+    function initPost() {
         if (this.contentElement) {
             loadTags.call(this);
             setIsVoteRequest.call(this);
@@ -191,8 +179,7 @@
      *
      * @param {HTMLElement} messageElement The post message container element
      */
-    function setPostElements(messageElement)
-    {
+    function setPostElements(messageElement) {
         this.messageElement = messageElement;
         this.contentElement = messageElement.querySelector('div.content');
         this.animator = this.animatorFactory.create(messageElement);
@@ -205,7 +192,8 @@
                 this.usernameElement = this.avatar32Element.nextSibling;
                 this.flairElement = this.usernameElement.nextSibling;
                 this.hasModifyableSignature = true;
-            } catch (e) {}
+            } catch (e) {
+            }
         }
     }
 
@@ -214,8 +202,7 @@
      *
      * @param {int} type The type of notification (cv/delv)
      */
-    function notify(type)
-    {
+    function notify(type) {
         if (!(this.notificationHistory & type)) {
             this.avatarNotificationManager.enqueue(this);
             this.notificationHistory |= type;
@@ -226,8 +213,7 @@
     /**
      * Mark the vote request as complete
      */
-    function markCompleted()
-    {
+    function markCompleted() {
         this.isOutstandingRequest = false;
         if (this.pluginSettings.getSetting('removeCompletedNotifications')) {
             this.avatarNotificationManager.dequeue(this);
@@ -245,8 +231,7 @@
      *
      * Called when the vote request target enters the open state
      */
-    function enterStateOpen()
-    {
+    function enterStateOpen() {
         this.questionStatus = this.questionStatuses.OPEN;
 
         if (this.voteType === this.voteTypes.DELV && !this.isOwnPost) {
@@ -270,8 +255,7 @@
      *
      * Called when the vote request target enters the closed state
      */
-    function enterStateClosed()
-    {
+    function enterStateClosed() {
         this.questionStatus = this.questionStatuses.CLOSED;
         if (this.voteType === this.voteTypes.DELV) {
             this.voteTagElement.firstChild.data = this.voteTagElement.firstChild.data.replace('cv-', 'delv-');
@@ -296,8 +280,7 @@
      *
      * Called when the vote request target enters the deleted state
      */
-    function enterStateDeleted()
-    {
+    function enterStateDeleted() {
         this.questionStatus = this.questionStatuses.DELETED;
 
         if (!this.hasQuestionData) {
@@ -321,8 +304,7 @@
      *
      * @return Boolean True if the post should not be oneboxed
      */
-    function isOneboxIgnored()
-    {
+    function isOneboxIgnored() {
         if (isVisited.call(this)) {
             return this.pluginSettings.getSetting('ignoreOneboxClickedPosts');
         }
@@ -335,8 +317,7 @@
      *
      * @return Boolean True if the post should not raise notifications
      */
-    function isNotifyIgnored()
-    {
+    function isNotifyIgnored() {
         if (isVisited.call(this)) {
             return this.pluginSettings.getSetting('ignoreNotifyClickedPosts');
         }
@@ -349,8 +330,7 @@
      *
      * @return Boolean True if the post should have a visited tag added
      */
-    function needsVisitedLabel()
-    {
+    function needsVisitedLabel() {
         if (isVisited.call(this)) {
             return this.pluginSettings.getSetting('addVisitedLabelToClickedPosts');
         }
@@ -361,8 +341,7 @@
     /**
      * Prepend a "visited" label to the post content
      */
-    function addVisitedLabel()
-    {
+    function addVisitedLabel() {
         if (!hasLabel.call(this, 'visited')) {
             addLabelToContent.call(this, 'visited', '#008B00', '#B4EEB4');
         }
@@ -373,22 +352,20 @@
      *
      * @return Boolean True if the post link has been previously visted by the user
      */
-    function isVisited()
-    {
+    function isVisited() {
         return this.clickTracker.isVisited(this.postId);
     }
 
     /**
      * Mark the post link as previously visited by the user
      */
-    function markVisited()
-    {
+    function markVisited() {
         var self = this;
 
         this.clickTracker.markVisited(this.postId);
 
         if (this.pluginSettings.getSetting('addVisitedLabelToClickedPosts')) {
-            setTimeout(function() {
+            setTimeout(function () {
                 addVisitedLabel.call(self);
             }, 1000);
         }
@@ -399,8 +376,7 @@
      *
      * Called after an API poll
      */
-    function updateOneBoxDisplay()
-    {
+    function updateOneBoxDisplay() {
         if (this.oneBox) {
             if (this.questionData) {
                 this.oneBox.setScore(this.questionData.score);
@@ -425,8 +401,7 @@
      * @param {string} foreColor Color for text and border
      * @param {string} backColor Color for background
      */
-    function addLabelToContent(text, foreColor, backColor)
-    {
+    function addLabelToContent(text, foreColor, backColor) {
         var labelEl, spacer;
 
         labelEl = this.document.createElement('span');
@@ -453,8 +428,7 @@
      *
      * @return Boolean True if the post has the specified label
      */
-    function hasLabel(label)
-    {
+    function hasLabel(label) {
         var i, l, labels = this.messageElement.querySelectorAll('.cvhelper-label');
 
         for (i = 0, l = labels.length; i < l; i++) {
@@ -469,8 +443,7 @@
     /**
      * Show the tiny-style signature
      */
-    function showSignatureTiny()
-    {
+    function showSignatureTiny() {
         this.avatar32Element.style.display = 'none';
         this.usernameElement.style.display = 'none';
         this.flairElement.style.display = 'none';
@@ -480,8 +453,7 @@
     /**
      * Show the medium-style signature
      */
-    function showSignatureMedium()
-    {
+    function showSignatureMedium() {
         this.avatar32Element.style.display = 'block';
         this.usernameElement.style.display = 'block';
         this.flairElement.style.display = 'none';
@@ -491,8 +463,7 @@
     /**
      * Show the large-style signature
      */
-    function showSignatureLarge()
-    {
+    function showSignatureLarge() {
         this.avatar32Element.style.display = 'block';
         this.usernameElement.style.display = 'block';
         this.flairElement.style.display = 'block';
@@ -511,10 +482,7 @@
      * @param {CvPlsHelper.ClickTracker}              clickTracker              Tracks previously visited vote request links
      * @param {HTMLElement}                           messageElement            The post message container element
      */
-    CvPlsHelper.Post = function(
-        document, pluginSettings, chatRoom, oneBoxFactory, avatarNotificationManager,
-        animatorFactory, clickTracker, messageElement
-    ) {
+    CvPlsHelper.Post = function (document, pluginSettings, chatRoom, oneBoxFactory, avatarNotificationManager, animatorFactory, clickTracker, messageElement) {
         this.document = document;
         this.pluginSettings = pluginSettings;
         this.chatRoom = chatRoom;
@@ -535,19 +503,19 @@
      * Enum of possible vote types
      */
     CvPlsHelper.Post.voteTypes = CvPlsHelper.Post.prototype.voteTypes = {
-        ROV:    1,
-        CV:     2,
-        DELV: 4
+        ROV:1,
+        CV:2,
+        DELV:4
     };
 
     /**
      * Enum of question statuses
      */
     CvPlsHelper.Post.questionStatuses = CvPlsHelper.Post.prototype.questionStatuses = {
-        UNKNOWN: 0,
-        OPEN:        1,
-        CLOSED:    2,
-        DELETED: 4
+        UNKNOWN:0,
+        OPEN:1,
+        CLOSED:2,
+        DELETED:4
     };
 
     /**
@@ -694,8 +662,7 @@
      *
      * @return HTMLElement|null The matching tag element or null if no match found
      */
-    CvPlsHelper.Post.prototype.matchTag = function(expr)
-    {
+    CvPlsHelper.Post.prototype.matchTag = function (expr) {
         var propName, matches, result = null;
         if (typeof expr === 'string' && this.tags[String(expr).toLowerCase()] !== undefined) {
             result = expr;
@@ -720,8 +687,7 @@
      * @param {HTMLElement} newNode          The new message container element
      * @param {Boolean}        isSameQuestionId If true keep the old onebox element
      */
-    CvPlsHelper.Post.prototype.replaceElement = function(newNode, isSameQuestionId)
-    {
+    CvPlsHelper.Post.prototype.replaceElement = function (newNode, isSameQuestionId) {
         isSameQuestionId = isSameQuestionId || false;
 
         this.isVoteRequest = this.voteType = this.questionId = null;
@@ -743,8 +709,7 @@
      *
      * @param {object} data The data response from the SE API
      */
-    CvPlsHelper.Post.prototype.setQuestionData = function(data)
-    {
+    CvPlsHelper.Post.prototype.setQuestionData = function (data) {
         this.questionData = data;
 
         if (!data) {
@@ -768,8 +733,7 @@
     /**
      * Strike through the post content
      */
-    CvPlsHelper.Post.prototype.strikethrough = function()
-    {
+    CvPlsHelper.Post.prototype.strikethrough = function () {
         this.contentWrapperElement.style.textDecoration = 'line-through';
         this.contentWrapperElement.style.color = '#222';
     };
@@ -777,8 +741,7 @@
     /**
      * Add a onebox to the post
      */
-    CvPlsHelper.Post.prototype.addOneBox = function()
-    {
+    CvPlsHelper.Post.prototype.addOneBox = function () {
         if (!this.oneBox && !this.isOwnPost && this.questionData && this.pluginSettings.getSetting('oneBox')) {
             this.oneBox = this.oneBoxFactory.create(this);
             this.oneBox.show();
@@ -791,8 +754,7 @@
      *
      * Logic taken from the SE code
      */
-    CvPlsHelper.Post.prototype.updateSignatureDisplay = function()
-    {
+    CvPlsHelper.Post.prototype.updateSignatureDisplay = function () {
         var messagesHeight;
 
         if (this.hasModifyableSignature) {
@@ -811,8 +773,7 @@
     /**
      * Remove the onebox from the post
      */
-    CvPlsHelper.Post.prototype.removeOneBox = function()
-    {
+    CvPlsHelper.Post.prototype.removeOneBox = function () {
         if (this.oneBox) {
             this.oneBox.hide();
             this.updateSignatureDisplay();
@@ -824,34 +785,31 @@
      *
      * @param {Event} e The event object
      */
-    CvPlsHelper.Post.prototype.questionLinkMouseDownHandler = function(e)
-    {
+    CvPlsHelper.Post.prototype.questionLinkMouseDownHandler = function (e) {
         var self = this;
 
         // Temporary fix for right click "bug"
         // TODO: implement this in a better way
         //if (e.button === 0 || e.button === 1) {
-            this.avatarNotificationManager.dequeue(this);
+        this.avatarNotificationManager.dequeue(this);
 
-            if (this.pluginSettings.getSetting('removeClickedOneboxes')) {
-                setTimeout(function() {
-                    self.removeOneBox();
-                }, 1000);
-            }
+        if (this.pluginSettings.getSetting('removeClickedOneboxes')) {
+            setTimeout(function () {
+                self.removeOneBox();
+            }, 1000);
+        }
 
-            markVisited.call(this);
+        markVisited.call(this);
         //}
     };
 
     /**
      * Scroll the window to the bring the post into the current view
      */
-    CvPlsHelper.Post.prototype.scrollTo = function()
-    {
+    CvPlsHelper.Post.prototype.scrollTo = function () {
         var originalBackgroundColor, scrollEnd, scrollTarget, rgbEnd, rgbDiff;
 
-        function parseRGB(value)
-        {
+        function parseRGB(value) {
             var parts, result = {};
             parts = value.match(/^#([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i);
             if (parts) {
@@ -877,31 +835,31 @@
 
             rgbEnd = parseRGB(originalBackgroundColor);
             rgbDiff = {
-                r: rgbEnd.r - 255,
-                g: rgbEnd.g - 255,
-                b: rgbEnd.b
+                r:rgbEnd.r - 255,
+                g:rgbEnd.g - 255,
+                b:rgbEnd.b
             };
 
             this.messageElement.style.backgroundColor = '#FFFF00';
             this.animator.animate({
-                startValue: scrollTarget.scrollY,
-                endValue: scrollEnd,
-                totalTime: 500,
-                frameFunc: function(newValue, animation) {
+                startValue:scrollTarget.scrollY,
+                endValue:scrollEnd,
+                totalTime:500,
+                frameFunc:function (newValue, animation) {
                     scrollTarget.scroll(scrollTarget.scrollX, newValue);
                 },
-                easing: 'decel',
-                complete: function() {
+                easing:'decel',
+                complete:function () {
                     this.animate({
-                        startValue: 0,
-                        endValue: 1,
-                        totalTime: 5000,
-                        frameFunc: function(newValue, animation) {
+                        startValue:0,
+                        endValue:1,
+                        totalTime:5000,
+                        frameFunc:function (newValue, animation) {
                             var r, g, b;
                             r = 255 + Math.floor(newValue * rgbDiff.r);
                             g = 255 + Math.floor(newValue * rgbDiff.g);
                             b = Math.floor(newValue * rgbDiff.b);
-                            this.style.backgroundColor = 'rgb('+r+', '+g+', '+b+')';
+                            this.style.backgroundColor = 'rgb(' + r + ', ' + g + ', ' + b + ')';
                         }
                     });
                 }
